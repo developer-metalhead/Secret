@@ -98,7 +98,7 @@ app.get(
 );
 
 app.get(
-  "/auth/google/secrets",
+  "https://gray-gentle-tick.cyclic.app/auth/google/secrets",
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, redirect to secrets.
