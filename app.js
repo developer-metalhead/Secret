@@ -12,6 +12,14 @@ dotenv.config();
 
 const app = express();
 
+mongoose.connect(`${process.env.MONGO_URI}`, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}, () => {
+  console.log("Connected to mongoose successfully")
+});
+
+
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.use(
@@ -23,8 +31,8 @@ app.use(
 app.use(
   session({
     secret: "Our little secret.",
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true
   })
 ); //always use it after all app.use
 
@@ -33,14 +41,6 @@ app.use(passport.session());
 
 
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true})
-.then(() => {
-        console.log("ok");
-    },
-    err => { 
-        console.log('error: '+ err)
-    }
-);
 
 const userSchema = new mongoose.Schema({
   email: String,
@@ -76,15 +76,25 @@ passport.use(
       callbackURL: "https://gray-gentle-tick.cyclic.app/auth/google/secrets",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
-    function (accessToken, refreshToken, profile, cb) {
-      console.log(profile);
-      User.findOrCreate(
-        { username: profile.displayName, googleId: profile.id },
-        async (err, user)=> {
-          return cb(err, user);
-        }
-      );
-    }
+    User.findOne({ googleId: profile.id }, async (err, doc) => {
+
+      if (err) {
+        return cb(err, null);
+      }
+
+      if (!doc) {
+        const newUser = new User({
+          googleId: profile.id,
+          username: profile.name.givenName
+        });
+
+        await newUser.save();
+        cb(null, newUser);
+      }
+      cb(null, doc);
+    })
+
+  
   )
 );
 
