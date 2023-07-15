@@ -73,7 +73,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "/auth/google/secrets",
+      callbackURL: "https://gray-gentle-tick.cyclic.app/auth/google/secrets",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     function (accessToken, refreshToken, profile, cb) {
@@ -98,7 +98,7 @@ app.get(
 );
 
 app.get(
-  "https://gray-gentle-tick.cyclic.app/auth/google/secrets",
+  "/auth/google/secrets",
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, redirect to secrets.
