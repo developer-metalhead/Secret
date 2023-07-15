@@ -10,7 +10,7 @@ const findOrCreate = require("mongoose-findorcreate");
 const dotenv = require("dotenv");
 dotenv.config();
 const cookieParser=require("cookie-parser");
-const MongoStore = require("connect-mongo");
+const MongoStore = require('connect-mongo').default;
 
 const app = express();
 
@@ -35,10 +35,10 @@ app.use(
     resave: true,
     saveUninitialized: true,
     proxy: true,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
     cookie: {
       secure: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      store: new MongoStore({ url: process.env.MONGO_URI }) //one week
     },
   })
 ); //always use it after all app.use
