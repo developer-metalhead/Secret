@@ -76,34 +76,15 @@ passport.use(
       callbackURL: "https://gray-gentle-tick.cyclic.app/auth/google/secrets",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
-    // function (accessToken, refreshToken, profile, cb) {
-    //   console.log(profile);
-    //   User.findOrCreate(
-    //     { username: profile.displayName, googleId: profile.id },
-    //     async (err, user)=> {
-    //       return cb(err, user);
-    //     }
-    //   );
-    // }
-    User.findOne({ username:profile.displayName,googleId: profile.id }, async (err, doc => {
-
-      if (err) {
-        return cb(err, null);
-      }
-
-      if (!doc) {
-        const newUser = new User({
-          googleId: profile.id,
-          username: profile.name.givenName
-        });
-
-        await newUser.save();
-        cb(null, newUser);
-      }
-      cb(null, doc);
-    })
-
-  
+    function (accessToken, refreshToken, profile, cb) {
+      console.log(profile);
+      User.findOrCreate(
+        { username: profile.displayName, googleId: profile.id },
+        function(err, user) {
+          return cb(err, user);
+        }
+      );
+    }
   )
 );
 
