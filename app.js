@@ -80,7 +80,7 @@ passport.use(
       console.log(profile);
       User.findOrCreate(
         { username: profile.displayName, googleId: profile.id },
-        function (err, user) {
+        async (err, user)=> {
           return cb(err, user);
         }
       );
