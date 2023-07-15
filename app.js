@@ -125,6 +125,7 @@ app.get("/secrets", function (req, res) {
 });
 
 app.get("/submit", function (req, res) {
+  console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
     res.render("submit");
   } else {
