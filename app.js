@@ -35,7 +35,7 @@ app.use(
     resave: true,
     saveUninitialized: true,
     proxy: true,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    store: MongoStore.create({ mongoUrl:  "mongodb+srv://admin-satwik:satwik@cluster0.bzlemkr.mongodb.net/test?retryWrites=true&w=majority"}),
     cookie: {
       secure: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
