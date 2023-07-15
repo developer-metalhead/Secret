@@ -32,8 +32,7 @@ app.use(
     resave: true,
     saveUninitialized: true,
     cookie: {
-	    httpOnly: true,
-	    expires: cookieExpirationDate // use expires instead of maxAge
+	    httpOnly: false
 	}
   })
 ); //always use it after all app.use
