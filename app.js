@@ -33,7 +33,7 @@ app.use(passport.session());
 
 
 
-mongoose.connect("mongodb+srv://admin-satwik:satwik@cluster0.bzlemkr.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => {
         console.log("ok");
     },
@@ -73,7 +73,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "https://gray-gentle-tick.cyclic.app/auth/google/secrets",
+      callbackURL: "/auth/google/secrets",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     function (accessToken, refreshToken, profile, cb) {
