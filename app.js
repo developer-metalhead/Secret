@@ -119,6 +119,7 @@ app.get("/login", function (req, res) {
 });
 
 app.get("/secrets", function (req, res) {
+  if (req.isAuthenticated()) {
   User.find({ secret: { $ne: null } })
     .then((foundUsers) => {
       if (foundUsers) {
@@ -128,6 +129,10 @@ app.get("/secrets", function (req, res) {
     .catch((err) => {
       console.log(err);
     });
+  }
+  else {
+    res.redirect("/login");
+  }
 });
 
 app.get("/submit", function (req, res) {
