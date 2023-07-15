@@ -9,14 +9,15 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 const dotenv = require("dotenv");
 dotenv.config();
+const cookieParser=require("cookie-parser");
+const MongoStore = require("connect-mongo");
 
 const app = express();
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
-
 
 app.use(express.static("public"));
 app.set("view engine", "ejs");
@@ -25,29 +26,25 @@ app.use(
     extended: true,
   })
 );
-
+app.use(cookieParser());
 app.enable("trust proxy");
 
 app.use(
   session({
-    secret: "Our little secret.",
+    secret: "Ourlittlesecret.",
     resave: true,
     saveUninitialized: true,
-	  proxy:true,
+    proxy: true,
     cookie: {
-	    
-      sameSite:"none",
-      secure:true,
-      maxAge:1000*60*60*24*7//one week
-	}
+      secure: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      store: new MongoStore({ url: process.env.MONGO_URI }) //one week
+    },
   })
 ); //always use it after all app.use
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-
 
 const userSchema = new mongoose.Schema({
   email: String,
@@ -87,7 +84,7 @@ passport.use(
       console.log(profile);
       User.findOrCreate(
         { username: profile.displayName, googleId: profile.id },
-        function(err, user) {
+        function (err, user) {
           return cb(err, user);
         }
       );
@@ -187,14 +184,14 @@ app.post("/login", function (req, res) {
 
 app.post("/submit", function (req, res) {
   const submittedSecret = req.body.secret;
-  
+
   User.findById(req.user.id)
     .then((foundUser) => {
       if (foundUser) {
         foundUser.secret = submittedSecret;
         foundUser.save().then(() => {
           res.redirect("/secrets");
-        })
+        });
       }
     })
     .catch((err) => {
@@ -202,7 +199,6 @@ app.post("/submit", function (req, res) {
     });
 });
 
-app.listen(process.env.PORT || 3000,function()
-{
-    console.log("Server started successfully");
+app.listen(process.env.PORT || 3000, function () {
+  console.log("Server started successfully");
 });
