@@ -31,7 +31,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb+srv://admin-satwik:satwik@cluster0.bzlemkr.mongodb.net/",  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+mongoose.connect("mongodb+srv://admin-satwik:satwik@cluster0.bzlemkr.mongodb.net/",  { useNewUrlParser: true, useUnifiedTopology: true});
 
 const userSchema = new mongoose.Schema({
   email: String,
