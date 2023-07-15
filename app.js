@@ -10,7 +10,7 @@ const findOrCreate = require("mongoose-findorcreate");
 const dotenv = require("dotenv");
 dotenv.config();
 const cookieParser=require("cookie-parser");
-const MongoStore = require('connect-mongo').default;
+const MongoStore = require('connect-mongo');
 
 const app = express();
 
