@@ -29,8 +29,8 @@ app.use(
 app.use(
   session({
     secret: "Our little secret.",
-    resave: false,
-    saveUninitialized: false
+    resave: true,
+    saveUninitialized: true
   })
 ); //always use it after all app.use
 
