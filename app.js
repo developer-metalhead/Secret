@@ -26,13 +26,18 @@ app.use(
   })
 );
 
+app.set("trust proxy",1);
+
 app.use(
   session({
     secret: "Our little secret.",
     resave: true,
     saveUninitialized: true,
     cookie: {
-	    httpOnly: false
+	    httpOnly: false,
+      sameSite:"none",
+      secure:true,
+      maxAge:1000*60*60*24*7//one week
 	}
   })
 ); //always use it after all app.use
