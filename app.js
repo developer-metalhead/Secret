@@ -30,7 +30,15 @@ app.use(
   session({
     secret: "Our little secret.",
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: new MongoStore({
+      url: config.urlMongo,
+      collection: 'sessions'
+    }),
+    cookie: {
+	    httpOnly: true,
+	    expires: cookieExpirationDate // use expires instead of maxAge
+	}
   })
 ); //always use it after all app.use
 
