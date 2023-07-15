@@ -33,7 +33,7 @@ app.use(passport.session());
 
 
 
-mongoose.connect("mongodb+srv://admin-satwik:satwik@cluster0.bzlemkr.mongodb.net/", { useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect("mongodb+srv://admin-satwik:<password>@cluster0.bzlemkr.mongodb.net/?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => {
         console.log("ok");
     },
