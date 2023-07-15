@@ -29,8 +29,8 @@ app.use(
 app.use(
   session({
     secret: "Our little secret.",
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: false
   })
 ); //always use it after all app.use
 
@@ -125,11 +125,10 @@ app.get("/secrets", function (req, res) {
 });
 
 app.get("/submit", function (req, res) {
-  if (req.isAuthenticated()) {
+  
     res.render("submit");
-  } else {
-    res.redirect("/login");
-  }
+  
+
 });
 
 app.post("/register", function (req, res) {
