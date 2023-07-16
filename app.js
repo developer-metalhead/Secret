@@ -6,11 +6,12 @@ const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 const dotenv = require("dotenv");
 dotenv.config();
-const cookieParser=require("cookie-parser");
-const MongoStore = require('connect-mongo');
+const cookieParser = require("cookie-parser");
+const MongoStore = require("connect-mongo");
 
 const app = express();
 
@@ -35,7 +36,10 @@ app.use(
     resave: true,
     saveUninitialized: true,
     proxy: true,
-    store: MongoStore.create({ mongoUrl:  "mongodb+srv://admin-satwik:satwik@cluster0.bzlemkr.mongodb.net/test?retryWrites=true&w=majority"}),
+    store: MongoStore.create({
+      mongoUrl:
+        "mongodb+srv://admin-satwik:satwik@cluster0.bzlemkr.mongodb.net/test?retryWrites=true&w=majority",
+    }),
     cookie: {
       secure: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
@@ -50,7 +54,8 @@ const userSchema = new mongoose.Schema({
   email: String,
   password: String,
   googleId: String,
-  secret: String,
+  secret: [String],
+  
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -92,6 +97,22 @@ passport.use(
   )
 );
 
+// passport.use(
+//   new FacebookStrategy(
+//     {
+//       clientID: FACEBOOK_APP_ID,
+//       clientSecret: FACEBOOK_APP_SECRET,
+//       callbackURL: "http://localhost:3000/auth/facebook/secrets",
+//       profileFields: ["id", "displayName", "photos", "email"],
+//     },
+//     function (accessToken, refreshToken, profile, cb) {
+//       User.findOrCreate({ username: profile.displayName,facebookId: profile.id }, function (err, user) {
+//         return cb(err, user);
+//       });
+//     }
+//   )
+// );
+
 app.get("/", function (req, res) {
   res.render("home");
 });
@@ -110,6 +131,24 @@ app.get(
   }
 );
 
+// app.get(
+//   "/auth/facebook",
+//   passport.authenticate("facebook", { scope: ["user_friends", "manage_pages"] })
+// );
+
+// app.get(
+//   "/auth/facebook/secrets",
+//   passport.authenticate(
+//     "facebook",
+//     { scope: ["user_friends", "manage_pages"] },
+//     { failureRedirect: "/login" }
+//   ),
+//   function (req, res) {
+//     // Successful authentication, redirect home.
+//     res.redirect("/");
+//   }
+// );
+
 app.get("/register", function (req, res) {
   res.render("register");
 });
@@ -120,17 +159,16 @@ app.get("/login", function (req, res) {
 
 app.get("/secrets", function (req, res) {
   if (req.isAuthenticated()) {
-  User.find({ secret: { $ne: null } })
-    .then((foundUsers) => {
-      if (foundUsers) {
-        res.render("secrets", { usersWithSecrets: foundUsers });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  }
-  else {
+    User.find({ secret: { $ne: null } })
+      .then((foundUsers) => {
+        if (foundUsers) {
+          res.render("secrets", { usersWithSecrets: foundUsers });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
     res.redirect("/login");
   }
 });
@@ -193,6 +231,7 @@ app.post("/submit", function (req, res) {
   User.findById(req.user.id)
     .then((foundUser) => {
       if (foundUser) {
+        foundUser.secret.push(submittedSecret);
         foundUser.secret = submittedSecret;
         foundUser.save().then(() => {
           res.redirect("/secrets");
